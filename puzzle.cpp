@@ -10,14 +10,16 @@ struct matrix_puzzle {
         int h_cost;
         int blank_x; // x co-ordinates of blank 
         int blank_y;// y co-ordinates of blank 
-
+    
+        // constructor for the puzzle
         matrix_puzzle() {
             g_cost = 0;
             h_cost = 0;
             blank_x=0;
             blank_y=0;
         }
-
+        
+       // constructor for the puzzle
         matrix_puzzle(vector<vector<int> > puzzle) {
             this->puzzle = puzzle;
             g_cost = 0;
@@ -42,9 +44,10 @@ struct matrix_puzzle {
         int getFcost() const{
             return this->g_cost+this->h_cost;
         }
-
+        
+        // comparator for priority queue
         bool operator<(const matrix_puzzle &lhs)  const{
-            return !(this->getFcost() < lhs.getFcost());
+            return (this->getFcost() > lhs.getFcost());
         }
 };
 
@@ -54,6 +57,7 @@ void printCst(matrix_puzzle pz) {
         cout << "value of h_cost: " << pz.h_cost << endl;
         cout << "value of f_cost: " << pz.g_cost + pz.h_cost << endl;
 }
+// cost function for MH
 int costOfManhattanDistance(vector<vector<int> >puzzle) {
     int totalCost = 0;
     int n = 1;
@@ -88,7 +92,8 @@ int costOfManhattanDistance(vector<vector<int> >puzzle) {
     }
     return totalCost;
 }
-        
+
+// cost function for MT
 int costOfTiles(vector<vector<int> >puzzle) {
     int totalCost = 0;
     vector<int> puzzleVec;
@@ -241,7 +246,7 @@ bool CheckGoalState(matrix_puzzle my_puzzle) {
     }
     return false;
 }
-
+//for custom input
 void populate(vector<vector<int> >&matrix, string choice){
     
     if(choice =="1"){
@@ -267,12 +272,13 @@ void populate(vector<vector<int> >&matrix, string choice){
 }
 
 int main() {
+    // vector to store m*m puzzle of any size
     vector<vector<int> > puzzle;
     string input;
         cout << "Enter 1 for default puzzle(which would be 3*3), 2 for custom puzzle: " << endl;
         cin >> input;
         int rows;
-        if(input == "1"){
+        if(input == "1"){ // default size is 3
             rows=3;
         }
         else{
@@ -300,15 +306,17 @@ int main() {
     cin >> algo; // default UCS
 
     matrix_puzzle my_puzzle(puzzle);
-    priority_queue<matrix_puzzle> states;
+    //using a prioirty queue since I need the lowest cost path
+    priority_queue<matrix_puzzle> puzzle_states;
 
-    map<string, bool> explored_states;
-    states.push(my_puzzle);
+    // map to keep track of visited states
+    map<string, bool> visited_states;
+    puzzle_states.push(my_puzzle);
     int maximum_queue_size = states.size();
     int nodes_expanded = 0;
-    while(!states.empty()) {
-        matrix_puzzle current = states.top();
-        states.pop();
+    while(!puzzle_states.empty()) {
+        matrix_puzzle current = puzzle_states.top();
+        puzzle_states.pop();
         if (CheckGoalState(current)) {
             cout << "Found Solution: " << endl;
             PrintState(current);
@@ -325,7 +333,7 @@ int main() {
             cout << "Initial state is: " << endl;
         }
         PrintState(current);
-        visit(current, states, explored_states, algo);
+        visit(current, puzzle_states, visited_states, algo);
         ++nodes_expanded;
         if (maximum_queue_size < states.size()) {
             maximum_queue_size = states.size();
