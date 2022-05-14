@@ -286,7 +286,7 @@ int main() {
         }
         else if (input == "2") {
             cin.ignore();
-            cout << "Input your puzzle, use zero to represent the blank: " << endl;
+            cout << "Input your puzzle, use zero for the blank: " << endl;
             cout << "Input your first row " << endl;
             puzzle.push_back(userInpt(input, rows));
             cout << "Input your second row " << endl;
