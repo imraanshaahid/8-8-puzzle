@@ -10,18 +10,10 @@ struct matrix_puzzle {
         int h_cost;
         int blank_x; // x co-ordinates of blank 
         int blank_y;// y co-ordinates of blank 
-    
-        // constructor for the puzzle
-        matrix_puzzle() {
-            g_cost = 0;
-            h_cost = 0;
-            blank_x=0;
-            blank_y=0;
-        }
         
        // constructor for the puzzle
-        matrix_puzzle(vector<vector<int> > puzzle) {
-            this->puzzle = puzzle;
+        matrix_puzzle(vector<vector<int> > pz) {
+            puzzle = pz;
             g_cost = 0;
             h_cost = 0;
             pair<int, int> p = positionOfBlank();
@@ -53,9 +45,9 @@ struct matrix_puzzle {
 
 
 void printCst(matrix_puzzle pz) {
-        cout << "value of g_cost: " << pz.g_cost << endl;
-        cout << "value of h_cost: " << pz.h_cost << endl;
-        cout << "value of f_cost: " << pz.g_cost + pz.h_cost << endl;
+        cout << "G Cost is " << pz.g_cost << endl;
+        cout << "H Cost is " << pz.h_cost << endl;
+        cout << "F Cost is " << pz.g_cost + pz.h_cost << endl;
 }
 // cost function for MH
 int costOfManhattanDistance(vector<vector<int> >puzzle) {
@@ -65,10 +57,10 @@ int costOfManhattanDistance(vector<vector<int> >puzzle) {
         for (int j = 0; j < puzzle.size() && n != puzzle.size() * puzzle.size(); ++j) {
             if (puzzle[i][j] != n) {
                 int flag = false;
-                for(int k = 0; k < puzzle.size(); ++k) {
-                    for (int l = 0; l < puzzle.size(); ++l) {
-                        if (n == puzzle[k][l]) {
-                            totalCost += abs(i - k) + abs(j - l);
+                for(int a = 0; a < puzzle.size(); ++a) {
+                    for (int b = 0; b < puzzle.size(); ++b) {
+                        if (n == puzzle[a][b]) {
+                            totalCost += abs(i - a) + abs(j - b);
                             flag = true;
                             break;
                         }
@@ -112,12 +104,12 @@ int costOfTiles(vector<vector<int> >puzzle) {
     }
     return totalCost;
 }
- void populateCost(matrix_puzzle &pz, string h) {
+ void populateCost(matrix_puzzle &pz, string algo) {
     pz.g_cost += 1;
-    if (h == "MT") {
+    if (algo == "MisplacedTiles") {
         pz.h_cost = costOfTiles(pz.puzzle);
     }
-    else if (h == "MD") {
+    else if (algo == "ManhattanDistance") {
         pz.h_cost = costOfManhattanDistance(pz.puzzle);
     }
     else {
@@ -312,7 +304,7 @@ int main() {
     // map to keep track of visited states
     map<string, bool> visited_states;
     puzzle_states.push(my_puzzle);
-    int maximum_queue_size = states.size();
+    int maximum_queue_size = visited_states.size();
     int nodes_expanded = 0;
     while(!puzzle_states.empty()) {
         matrix_puzzle current = puzzle_states.top();
@@ -335,8 +327,8 @@ int main() {
         PrintState(current);
         visit(current, puzzle_states, visited_states, algo);
         ++nodes_expanded;
-        if (maximum_queue_size < states.size()) {
-            maximum_queue_size = states.size();
+        if (maximum_queue_size < visited_states.size()) {
+            maximum_queue_size = visited_states.size();
         }
     }
     cout << "Puzzle has no sol!" << endl;
